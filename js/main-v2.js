@@ -16,35 +16,27 @@ chatBoxPlatform28 = function(){
     const CHAT_BOX_ELEMENT_ID = '#chatBoxPlatform28';
     // const CHAT_BOX_ELEMENT_ID = 'chatBoxPlatform28';
     const BASE_URI = 'https://';
-    const SEND_MESSAGE_BUTTON = '.send-btn--js';
     const CIRCLE_BOX_BUTTON = '.bubble-icon';
     const CLOSE_BUTTON = '.close-btn';
     const CHAT_CONTAINER = '.chat-container';
     const CHAT_CONTAINER_HIDDEN_CLASS = 'display-none';
-    const CLIENT_MESSAGE_CLASS = '';
-    const SERVER_MESSAGE_CLASS = '';
-    const CHAT_BOX_CLIENT_MESSAGE = '';
+    const CHAT_CONTAINER_BODY_MESSAGE = '.body';
+    const CHAT_CONTAINER_CLIENT_MESSAGE_BOX = '.message';
+    const CHAT_CONTAINER_SEND_MESSAGE_BUTTON = '.send-btn--js';
 
     let options = {};
     let chatBoxElement = null;
 
-    function init(options){
-        options = createOptions(options);
+    function init(opts){
+        options = createOptions(opts);
         chatBoxElement = document.querySelector(options.chatBoxElementId);
 
         if (!chatBoxElement) {
-            console.error(`Couldn't find the chat box element id: ${options.chatBoxElementId}`);
-            return;
+            throw error(`Couldn't find the chat box element id: ${options.chatBoxElementId}`);
         }
 
         applyStyle();
         chatBoxElement = render();
-
-        if (!chatBoxElement) {
-            console.error(`Couldn't create the chat box`);
-            return;
-        }
-
         registerEvents();
     }
 
@@ -60,13 +52,13 @@ chatBoxPlatform28 = function(){
     function applyStyle() {
         const style = `
             <style>
-                .test {
+                .test-v2 {
                     display: none;
                 }
             </style>
         `;
-        let headElement = document.querySelector('html > head');
-        headElement.insertAdjacentHTML('beforeend', style);
+
+        document.head.insertAdjacentHTML('beforeend', style);
     }
 
     function render() {
@@ -96,55 +88,37 @@ chatBoxPlatform28 = function(){
                             <div class="bubble-icon">
                             </div>
                           </section>`;
-
         let chatBox = document.querySelector(CHAT_BOX_ELEMENT_ID);
         chatBox.innerHTML = template;
         return chatBox;
     }
 
     function registerEvents() {
-        const circleBoxElement = chatBoxElement.querySelector(CIRCLE_BOX_BUTTON);
-        if (circleBoxElement) {
-            circleBoxElement.addEventListener('click', () => {
-                let chatContainer = chatBoxElement.querySelector(CHAT_CONTAINER);
-                if (chatContainer) {
-                    chatContainer.classList.remove(CHAT_CONTAINER_HIDDEN_CLASS);
-                }
-            });
-        }
+        chatBoxElement.querySelector(CIRCLE_BOX_BUTTON).addEventListener('click', () => {
+            let chatContainer = chatBoxElement.querySelector(CHAT_CONTAINER);
+            if (chatContainer) {
+                chatContainer.classList.remove(CHAT_CONTAINER_HIDDEN_CLASS);
+            }
+        });
 
-        const closeButtonElement = chatBoxElement.querySelector(CLOSE_BUTTON);
-        if (closeButtonElement) {
-            closeButtonElement.addEventListener('click', () => {
-                let chatContainer = chatBoxElement.querySelector(CHAT_CONTAINER);
-                if (chatContainer) {
-                    chatContainer.classList.add(CHAT_CONTAINER_HIDDEN_CLASS);
-                    // TODO: need to reset data in chat box
-                }
-            });
-        }
+        chatBoxElement.querySelector(CLOSE_BUTTON).addEventListener('click', () => {
+            let chatContainer = chatBoxElement.querySelector(CHAT_CONTAINER);
+            if (chatContainer) {
+                chatContainer.classList.add(CHAT_CONTAINER_HIDDEN_CLASS);
+                // TODO: need to reset data in chat box
+            }
+        });
 
-        const sendMessageButton = chatBoxElement.querySelector(SEND_MESSAGE_BUTTON);
-        if (sendMessageButton) {
-            sendMessageButton.addEventListener('click', async() => {
-                const clientMessageBox = chatBoxElement.querySelector('.message');
-                const clientMessage = clientMessageBox.value;
-                if(clientMessage) {
-                    await sendClientMessage(clientMessage);
-                    renderClientMessage(clientMessage);
-                    const serverMessage = await getServerMessage();
-                    renderServerMessage(serverMessage);
-                }
-            });
-        }
-
-        // document.getElementsByClassName(SEND_MESSAGE_BUTTON).addEventListener('click', async() => {
-        //     const clientMessage = chatBoxElement
-        //     await sendClientMessage();
-        //     renderClientMessage(clientMessage);
-        //     const serverMessage = await getServerMessage();
-        //     renderServerMessage();
-        // });
+        chatBoxElement.querySelector(CHAT_CONTAINER_SEND_MESSAGE_BUTTON).addEventListener('click', async() => {
+            const clientMessageBox = chatBoxElement.querySelector(CHAT_CONTAINER_CLIENT_MESSAGE_BOX);
+            const clientMessage = clientMessageBox.value;
+            if(clientMessage) {
+                await sendClientMessage(clientMessage);
+                renderClientMessage(clientMessage);
+                const serverMessage = await getServerMessage();
+                renderServerMessage(serverMessage);
+            }
+        });
     }
 
     function renderClientMessage(message) {
@@ -153,8 +127,8 @@ chatBoxPlatform28 = function(){
                                 ${message}
                             </div>
                         </div>`;
+        let bodyElement = chatBoxElement.querySelector(CHAT_CONTAINER_BODY_MESSAGE);
 
-        const bodyElement = chatBoxElement.querySelector('.body');
         bodyElement.insertAdjacentHTML('beforeend', template);
     }
 
@@ -164,8 +138,8 @@ chatBoxPlatform28 = function(){
                                      ${message}
                                 </div>
                             </div>`;
+        let bodyElement = chatBoxElement.querySelector(CHAT_CONTAINER_BODY_MESSAGE);
 
-        const bodyElement = chatBoxElement.querySelector('.body');
         bodyElement.insertAdjacentHTML('beforeend', template);
     }
 
@@ -182,17 +156,17 @@ chatBoxPlatform28 = function(){
     }
 
     function getServerMessage() {
-        const sampleMessages = ['server -test 1','server -test 2','server-test 3'];
+        const randomInteger = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+
+        const sampleMessages = ['server-test 1','server-test 2','server-test 3'];
         const message = sampleMessages[randomInteger(0, sampleMessages.length - 1)];
         const promise = new Promise(function(resolve, reject) {
             setTimeout(() => resolve(message), 1000);
         });
 
         return promise;
-
-        function randomInteger(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
     }
 
     return{
@@ -203,6 +177,6 @@ chatBoxPlatform28 = function(){
 try {
     chatBoxPlatform28.init();    
 } catch (error) {
-    console.error('Something errors in chat box' + error);
+    console.error('Something errors in chat box: ' + error);
 }
 

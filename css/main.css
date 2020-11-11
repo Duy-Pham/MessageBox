@@ -1,0 +1,90 @@
+
+.chat-box-container {
+    position: fixed;
+    right: 16px;
+    bottom: 32px;
+    z-index: 99999999;
+}
+
+.chat-container {
+    width: 250px;
+    height: 400px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+}
+
+.display-none {
+    display: none;
+}
+
+.chat-container .header {
+    position: relative;
+    text-align: center;
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.chat-container .header .close-btn {
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 16px;
+}
+
+.chat-container .header .close-btn:hover {
+    cursor: pointer;
+}
+
+.chat-container .body {
+    height: calc(100% - 108px);
+}
+
+.chat-container .body .row{
+    display: grid;
+    padding: 5px 0;
+}
+
+.chat-container .body .client-message {
+    float: right;
+    background-color: gold;
+}
+
+.chat-container .body .server-message{
+    float: left;
+    background-color: aliceblue;
+}
+
+.chat-container .footer {
+    border-top: 1px solid rgba(0, 0, 0, .2);
+    height: 35px;
+    padding: 8px;
+}
+
+.chat-container .footer .message {
+    border: none;
+    height: 100%;
+    width: 178px;
+    outline: none;
+}
+
+.chat-container .footer .send-btn--js {
+    border: none;
+}
+
+.chat-container .footer .send-btn--js:hover {
+    cursor: pointer;
+}
+
+.bubble-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: blue;
+    float: right;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+}
